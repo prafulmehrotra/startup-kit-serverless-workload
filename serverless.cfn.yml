@@ -15,9 +15,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Startup Kit RESTful API backed by a SimpleTable (DynamoDB).
-
 Resources:
-  
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      DefinitionUri: swagger.yaml
+      StageName: Prod
+      
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -32,6 +36,7 @@ Resources:
         PostResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/new
             Method: post
 
@@ -49,6 +54,7 @@ Resources:
         GetResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/all
             Method: get
 
@@ -68,6 +74,7 @@ Resources:
         GetResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/active
             Method: get
 
@@ -85,6 +92,7 @@ Resources:
         PutResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/active
             Method: put
 
@@ -104,6 +112,7 @@ Resources:
         GetResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/complete
             Method: get
 
@@ -121,6 +130,7 @@ Resources:
         PutResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/complete
             Method: put
 
@@ -138,6 +148,7 @@ Resources:
         DeleteResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayApi
             Path: /todo/complete
             Method: delete
 
