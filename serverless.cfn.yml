@@ -15,13 +15,270 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Startup Kit RESTful API backed by a SimpleTable (DynamoDB).
+
 Resources:
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
-      DefinitionUri: swagger.yaml
       StageName: Prod
-      
+      DefinitionBody:
+          swagger: "2.0"
+          info:
+            version: "1.0"
+            title: "StartupKitServerlessTodoApp"
+          basePath: "/Prod"
+          schemes:
+          - "https"
+          paths:
+            "/todo/active":
+              get:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitGetActiveFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              put:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitUpdateActiveFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              options:
+                consumes:
+                - "application/json"
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  responses:
+                    default:
+                      statusCode: "200"
+                      responseParameters:
+                        method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,PUT'"
+                        method.response.header.X-Requested-With: "'*'"
+                        method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                        method.response.header.Access-Control-Allow-Origin: "'*'"
+                  requestTemplates:
+                    application/json: "{\"statusCode\": 200}"
+                  passthroughBehavior: "when_no_match"
+                  type: "mock"
+            "/todo/all":
+              get:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitGetAllFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              options:
+                consumes:
+                - "application/json"
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  responses:
+                    default:
+                      statusCode: "200"
+                      responseParameters:
+                        method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                        method.response.header.X-Requested-With: "'*'"
+                        method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                        method.response.header.Access-Control-Allow-Origin: "'*'"
+                  requestTemplates:
+                    application/json: "{\"statusCode\": 200}"
+                  passthroughBehavior: "when_no_match"
+                  type: "mock"
+            "/todo/complete":
+              get:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitGetCompleteFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              put:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitMarkCompleteFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              delete:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitDeleteCompleteFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              options:
+                consumes:
+                - "application/json"
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  responses:
+                    default:
+                      statusCode: "200"
+                      responseParameters:
+                        method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,OPTIONS,PUT'"
+                        method.response.header.X-Requested-With: "'*'"
+                        method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                        method.response.header.Access-Control-Allow-Origin: "'*'"
+                  requestTemplates:
+                    application/json: "{\"statusCode\": 200}"
+                  passthroughBehavior: "when_no_match"
+                  type: "mock"
+            "/todo/new":
+              post:
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  uri: 
+                    Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:StartupKitCreateFunction/invocations"
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  type: "aws_proxy"
+              options:
+                consumes:
+                - "application/json"
+                responses:
+                  '200':
+                    description: "200 response"
+                    headers:
+                      X-Requested-With:
+                        type: "string"
+                      Access-Control-Allow-Origin:
+                        type: "string"
+                      Access-Control-Allow-Methods:
+                        type: "string"
+                      Access-Control-Allow-Headers:
+                        type: "string"
+                x-amazon-apigateway-integration:
+                  responses:
+                    default:
+                      statusCode: "200"
+                      responseParameters:
+                        method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+                        method.response.header.X-Requested-With: "'*'"
+                        method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                        method.response.header.Access-Control-Allow-Origin: "'*'"
+                  requestTemplates:
+                    application/json: "{\"statusCode\": 200}"
+                  passthroughBehavior: "when_no_match"
+                  type: "mock"
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -59,7 +316,7 @@ Resources:
             Method: get
 
   # API functions related to active TODO items
-  
+
   GetActiveFunction:
     Type: AWS::Serverless::Function
     Properties:

@@ -8,11 +8,17 @@ const tableName = process.env.TABLE_NAME;
 // API Gateway's Lambda proxy integration requires a
 // Lambda function to return JSON in this format;
 // see the Developer Guide for further details
-const createResponse = (statusCode, body) => {
+const createResponse = (statusCode, body, allowedmethods) => {
     
     return {
         statusCode: statusCode,
-        body: body
+        body: body,
+        headers: {
+            "X-Requested-With": "'*'",
+            "Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,x-requested-with'",
+            "Access-Control-Allow-Origin": "'*'",
+            "Access-Control-Allow-Methods": allowedmethods
+        }
     }
 };
 
@@ -29,10 +35,10 @@ exports.create = (event, context, callback) => {
     
     dbPut(params).then( (data) => {
         console.log(`CREATE ITEM SUCCEEDED FOR todo_id = ${params.Item.todo_id}`);
-        callback(null, createResponse(200, `TODO item created with todo_id = ${params.Item.todo_id}\n`));
+        callback(null, createResponse(200, `TODO item created with todo_id = ${params.Item.todo_id}\n`, "POST,OPTIONS"));
     }).catch( (err) => { 
         console.log(`CREATE ITEM FAILED FOR todo_id = ${params.Item.todo_id}, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err)); 
+        callback(null, createResponse(500, err, "POST,OPTIONS")); 
     });
 };
 
@@ -52,10 +58,10 @@ exports.getAll = (event, context, callback) => {
             return;
         }
         console.log(`RETRIEVED ITEMS SUCCESSFULLY WITH count = ${data.Count}`);
-        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n') );
+        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n', "GET,OPTIONS") );
     }).catch( (err) => { 
         console.log(`GET ITEMS FAILED, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err));
+        callback(null, createResponse(500, err, "GET,OPTIONS"));
     });
 };
 
@@ -73,14 +79,14 @@ exports.getActive = (event, context, callback) => {
     
     dbGet(params).then( (data) => {
         if (!data.Items) {
-            callback(null, createResponse(404, 'ITEMS NOT FOUND\n'));
+            callback(null, createResponse(404, 'ITEMS NOT FOUND\n', "GET,OPTIONS,PUT"));
             return;
         }
         console.log(`RETRIEVED ITEMS SUCCESSFULLY WITH count = ${data.Count}`);
-        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n') );
+        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n', "GET,OPTIONS,PUT") );
     }).catch( (err) => { 
         console.log(`GET ITEMS FAILED, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err));
+        callback(null, createResponse(500, err, "GET,OPTIONS,PUT"));
     });
 };
 
@@ -95,10 +101,10 @@ exports.updateActive = (event, context, callback) => {
     
     dbPut(params).then( (data) => {
         console.log(`PUT ITEM SUCCEEDED FOR todo_id = ${params.Item.todo_id}`);
-        callback(null, createResponse(200, `TODO item updated with todo_id = ${params.Item.todo_id}\n`));
+        callback(null, createResponse(200, `TODO item updated with todo_id = ${params.Item.todo_id}\n`, "GET,OPTIONS,PUT"));
     }).catch( (err) => { 
         console.log(`PUT ITEM FAILED FOR todo_id = ${params.Item.todo_id}, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err)); 
+        callback(null, createResponse(500, err, "GET,OPTIONS,PUT")); 
     });
 };
 
@@ -116,14 +122,14 @@ exports.getComplete = (event, context, callback) => {
     
     dbGet(params).then( (data) => {
         if (!data.Items) {
-            callback(null, createResponse(404, 'ITEMS NOT FOUND\n'));
+            callback(null, createResponse(404, 'ITEMS NOT FOUND\n', "GET,OPTIONS,PUT,DELETE"));
             return;
         }
         console.log(`RETRIEVED ITEMS SUCCESSFULLY WITH count = ${data.Count}`);
-        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n') );
+        callback(null, createResponse(200, JSON.stringify(data.Items) + '\n', "GET,OPTIONS,PUT,DELETE") );
     }).catch( (err) => { 
         console.log(`GET ITEMS FAILED, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err));
+        callback(null, createResponse(500, err, "GET,OPTIONS,PUT,DELETE"));
     });
 };
 
@@ -141,10 +147,10 @@ exports.markComplete = (event, context, callback) => {
     
     dbPut(params).then( (data) => {
         console.log(`PUT ITEM SUCCEEDED FOR todo_id = ${item.todo_id}`);
-        callback(null, createResponse(200, `TODO item marked complete with todo_id = ${item.todo_id}\n`));
+        callback(null, createResponse(200, `TODO item marked complete with todo_id = ${item.todo_id}\n`, "GET,OPTIONS,PUT,DELETE"));
     }).catch( (err) => { 
         console.log(`PUT ITEM FAILED FOR todo_id = ${item.todo_id}, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err)); 
+        callback(null, createResponse(500, err, "GET,OPTIONS,PUT,DELETE")); 
     });
 };
 
@@ -162,16 +168,16 @@ exports.deleteComplete = (event, context, callback) => {
     
     dbGet(params).then( (data) => {
         if (!data.Items) {
-            callback(null, createResponse(404, 'NO ITEMS FOUND FOR DELETION\n'));
+            callback(null, createResponse(404, 'NO ITEMS FOUND FOR DELETION\n', "GET,OPTIONS,PUT,DELETE"));
             return;
         }
         console.log(`NUMBER OF ITEMS TO DELETE = ${data.Count}`);
         let ids = data.Items.map( (item) => { return item.todo_id; });
         ids.forEach( (id) => deleteIndividualItem(id) );
-        callback(null, createResponse(200, `${data.Count} items submitted for deletion\n`) );
+        callback(null, createResponse(200, `${data.Count} items submitted for deletion\n`, "GET,OPTIONS,PUT,DELETE"));
     }).catch( (err) => { 
         console.log(`GET ITEMS FOR DELETION FAILED, WITH ERROR: ${err}`);
-        callback(null, createResponse(500, err));
+        callback(null, createResponse(500, err, "GET,OPTIONS,PUT,DELETE"));
     });   
 
 };
